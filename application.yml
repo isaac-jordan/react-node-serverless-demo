@@ -32,4 +32,4 @@ Resources:
           - AllowedMethods: ["GET", "PUT", "POST", "HEAD", "DELETE"]
             AllowedOrigins: ["*"]
             MaxAge: 3000
-            ExposedHeaders: ["*"]
+            AllowedHeaders: ["*"]
