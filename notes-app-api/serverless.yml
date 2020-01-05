@@ -14,12 +14,14 @@ provider:
   runtime: nodejs10.x
   stage: prod
   region: eu-west-1
+  variableSyntax: "\\${{([ ~:a-zA-Z0-9._@\\'\",\\-\\/\\(\\)]+?)}}" # Use ${{...}} syntax for Serverless variables
 
   # These environment variables are made available to our functions
   # under process.env.
   environment:
+    appname: react-node-serverless-demo
     tableName: react-node-serverless-demo-notes
-    stripeSecretKey: ${env:STRIPE_SECRET_KEY}
+    stripeSecretKey: ${{env:STRIPE_SECRET_KEY}}
 
   # 'iamRoleStatements' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
@@ -108,6 +110,11 @@ functions:
 
 # Create our resources with separate CloudFormation templates
 resources:
-  - ${file(resources/api-gateway-errors.yml)}
-  - ${file(resources/storage.yml)}
-  - ${file(resources/user-pool.yml)}
+  - Parameters:
+      ApplicationName:
+        Type: String
+        Default: react-node-serverless-demo
+        AllowedPattern: "[A-Za-z0-9-]+"
+  - ${{file(resources/api-gateway-errors.yml)}}
+  - ${{file(resources/storage.yml)}}
+  - ${{file(resources/user-pool.yml)}}
