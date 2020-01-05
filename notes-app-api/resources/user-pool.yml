@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: react-node-serverless-demo application resources
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Default: react-node-serverless-demo
+    AllowedPattern: "[A-Za-z0-9-]+"
+
+Resources:
+  NotesCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub ['${appname}-notes-user-pool', { appname: !Ref ApplicationName }]
+      UsernameAttributes: ["email"]
+  NotesCognitoPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub ['${appname}-notes-app', { appname: !Ref ApplicationName }]
+      ExplicitAuthFlows: ["ALLOW_ADMIN_USER_PASSWORD_AUTH", "ALLOW_CUSTOM_AUTH", "ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+      UserPoolId: !Ref NotesCognitoUserPool
+  NotesCognitoPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Sub ['${appname}-notes-app', { appname: !Ref ApplicationName }]
+      UserPoolId: !Ref NotesCognitoUserPool

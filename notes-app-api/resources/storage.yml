@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: react-node-serverless-demo application resources
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Default: react-node-serverless-demo
+    AllowedPattern: "[A-Za-z0-9-]+"
+
+Resources:
+  NotesDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ['${appname}-notes', { appname: !Ref ApplicationName }]
+      KeySchema:
+        -  AttributeName: userId
+           KeyType: HASH
+        -  AttributeName: noteId
+           KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: noteId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+  NotesUploadsS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ['${appname}-notes-uploads', { appname: !Ref ApplicationName }]
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods: ["GET", "PUT", "POST", "HEAD", "DELETE"]
+            AllowedOrigins: ["*"]
+            MaxAge: 3000
+            AllowedHeaders: ["*"]
